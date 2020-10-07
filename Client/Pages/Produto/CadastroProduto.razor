@@ -1,0 +1,59 @@
+@page  "/Produto/CadastroProduto"
+@using System.Net.Http
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<div class="card m-3">
+    <h4 class="card-header">Cadastro de Produtos</h4>
+    <div class="card-body">
+        <EditForm Model="@produto" OnValidSubmit="HandleValidSubmit" @onreset="HandleReset">
+            <DataAnnotationsValidator />
+            <div class="form-row">
+                
+                <div class="form-group col-5">
+                    <label>ID do Produto</label>
+                    <InputNumber @bind-Value="produto.Id" class="form-control" />
+                    <ValidationMessage For="@(() => produto.Id)" />
+                </div>
+                <div class="form-group col-5">
+                    <label>Preço</label>
+                    <InputNumber @bind-Value="produto.valor" class="form-control" />
+                    <ValidationMessage For="@(() => produto.valor)" />
+                </div>
+                <div class="form-group col-5">
+                    <label>Descrição</label>
+                    <InputText @bind-Value="produto.descricao" class="form-control" />
+                    <ValidationMessage For="@(() => produto.descricao)" />
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary mr-1">Salvar</button>
+                <button type="reset" class="btn btn-secondary">Cancelar</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+
+    private Produto produto = new Produto();
+    private EditContext editContext { get; set; }
+
+    private async Task HandleValidSubmit()
+    {
+        //Enviar dados para o Controller no Backend
+        var teste = await Http.PostAsJsonAsync("/Produto/Create", produto);
+        NavigationManager.NavigateTo("Produto/ListProduto");
+
+    }
+
+    private void HandleReset()
+    {
+        produto = new Produto();
+        editContext = new EditContext(produto);
+    }
+
+
+
+}
